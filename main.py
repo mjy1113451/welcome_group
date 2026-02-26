@@ -63,7 +63,7 @@ class WelcomePlugin(Star):
             if result:
                 yield result
             
-    except SomeError:
+    except ImportError:
         # 回退方案
         try:
             from astrbot.api.event import EventMessageType
