@@ -46,36 +46,9 @@ class WelcomePlugin(Star):
         except Exception as e:
             logger.error(f"保存配置文件失败: {e}")
 
-    # 监听事件
-    # 尝试使用 platform_adapter_type 来监听特定平台的所有事件，这通常比 event_message_type 更宽泛
-    # 如果 PlatformAdapterType 不可用，回退到 event_message_type
-    try:
-        from astrbot.api.event.filter import PlatformAdapterType, EventMessageType
-        
-        # 优先尝试监听 AIOCQHTTP (OneBot) 平台的所有事件
-        # 注意：这里我们同时使用了两个装饰器，或者根据环境选择一个
-        # 为了保险起见，我们定义一个统一的 handler，并尝试用多种方式注册
-        
-        # 策略：如果能导入 PlatformAdapterType，就用它。这通常能捕获所有来自该 Adapter 的事件。
-@filter.platform_adapter_type(PlatformAdapterType.AIOCQHTTP)
-        async def on_group_increase(self, event: AstrMessageEvent):
-            result = await self._handle_group_increase(event)
-            if result:
-                yield result
-            
-    except ImportError:
-        # 回退方案
-        try:
-            from astrbot.api.event import EventMessageType
-@filter.event_message_type(EventMessageType.ALL)
-            async def on_group_increase(self, event: AstrMessageEvent):
-                result = await self._handle_group_increase(event)
-                if result:
-                    yield result
-        except ImportError:
-            logger.error("WelcomePlugin: 无法导入必要的 Filter 类型，监听可能失败。")
-
-    async def _handle_group_increase(self, event: AstrMessageEvent):
+    # 监听事件 - 修改这里
+    @filter.event_message_type(filter.EventMessageType.ALL)
+    async def on_group_increase(self, event: AstrMessageEvent):
         """统一处理逻辑"""
         try:
             # 兼容不同类型的 event 对象获取 raw_message
@@ -165,12 +138,12 @@ class WelcomePlugin(Star):
             logger.error(f"WelcomePlugin: 处理事件失败: {e}")
         return None
 
-@filter.command_group("welcome")
+    @filter.command_group("welcome")
     def welcome_group_cmd(self):
         """群欢迎插件管理"""
         pass
 
-@welcome_group_cmd.command("set")
+    @welcome_group_cmd.command("set")
     async def set_welcome(self, event: AstrMessageEvent, message: str):
         """设置欢迎语。支持变量: {at}, {user_id}, {time}。例如: /welcome set 欢迎 {at} 于 {time} 加入！"""
         # AstrBot 默认只会解析第一个参数到 message
@@ -202,7 +175,7 @@ class WelcomePlugin(Star):
         
         yield event.plain_result(f"已设置本群欢迎语为：\n{message}")
 
-@welcome_group_cmd.command("on")
+    @welcome_group_cmd.command("on")
     async def enable_welcome(self, event: AstrMessageEvent):
         """开启当前群的欢迎功能"""
         group_id = event.message_obj.group_id
@@ -217,7 +190,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result("本群欢迎功能已开启。")
 
-@welcome_group_cmd.command("off")
+    @welcome_group_cmd.command("off")
     async def disable_welcome(self, event: AstrMessageEvent):
         """关闭当前群的欢迎功能"""
         group_id = event.message_obj.group_id
@@ -231,7 +204,7 @@ class WelcomePlugin(Star):
             
         yield event.plain_result("本群欢迎功能已关闭。")
 
-@welcome_group_cmd.command("test")
+    @welcome_group_cmd.command("test")
     async def test_welcome(self, event: AstrMessageEvent):
         """测试发送当前群的欢迎语"""
         group_id = event.message_obj.group_id
