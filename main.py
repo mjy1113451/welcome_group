@@ -58,6 +58,7 @@ class WelcomePlugin(Star):
         
         # 策略：如果能导入 PlatformAdapterType，就用它。这通常能捕获所有来自该 Adapter 的事件。
 try:
+except SomeError:
 @filter.platform_adapter_type(PlatformAdapterType.AIOCQHTTP)
         async def on_group_increase(self, event: AstrMessageEvent):
             result = await self._handle_group_increase(event)
