@@ -1,14 +1,34 @@
-# astrbot-plugin-helloworld
+Astrbot 欢迎插件
+✨ 简介
+一款为 Astrbot 平台设计的欢迎新成员入群的插件，支持自定义欢迎模板、提示成员入群等功能。
 
-AstrBot 插件模板 / A template plugin for AstrBot plugin feature
+🛠️ 功能特性
+自定义欢迎模板
+给与入群时间
+提示入群用户自己的 UID
+🎮 指令说明
+🎯 欢迎开关指令
+/welcome on
+在群聊中使用，为本群开启自动欢迎新成员入群。
 
-> [!NOTE]
-> This repo is just a template of [AstrBot](https://github.com/AstrBotDevs/AstrBot) Plugin.
-> 
-> [AstrBot](https://github.com/AstrBotDevs/AstrBot) is an agentic assistant for both personal and group conversations. It can be deployed across dozens of mainstream instant messaging platforms, including QQ, Telegram, Feishu, DingTalk, Slack, LINE, Discord, Matrix, etc. In addition, it provides a reliable and extensible conversational AI infrastructure for individuals, developers, and teams. Whether you need a personal AI companion, an intelligent customer support agent, an automation assistant, or an enterprise knowledge base, AstrBot enables you to quickly build AI applications directly within your existing messaging workflows.
+/welcome off
+在群聊中使用，为本群关闭自动欢迎新成员入群。
 
-# Supports
+⚙️ 设置打卡模板
+/welcome set
+在群聊中使用，为本群配置入群欢迎模板，在命令后面加模板。
 
-- [AstrBot Repo](https://github.com/AstrBotDevs/AstrBot)
-- [AstrBot Plugin Development Docs (Chinese)](https://docs.astrbot.app/dev/star/plugin-new.html)
-- [AstrBot Plugin Development Docs (English)](https://docs.astrbot.app/en/dev/star/plugin-new.html)
+支持{at}（@入群用户），{time}（入群时间），{user_id} （入群用户 UID）。
+
+/welcome test
+在群聊中使用，以自己为例，当前时间为准测试配置的模板。
+
+📅 更新日志
+v0.01
+初始版本发布
+支持自定义模板
+支持开关欢迎用户
+❤️ 支持
+如果您在使用中遇到问题，欢迎在 github 仓库提交 Issue。
+
+如果本插件对你有帮助，欢迎点个 ⭐ Star 支持一下！
