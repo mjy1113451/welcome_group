@@ -260,7 +260,7 @@ class WelcomePlugin(Star):
     def welcome(self):
         pass
 
-    @welcome.command("set", "设置当前群欢迎语", alias={'设置欢迎'})
+    @welcome.command("set", description="设置当前群欢迎语", alias={'设置欢迎'})
     async def set_welcome(self, event: AstrMessageEvent, message: str = ""):
         """
         设置当前群的入群欢迎语
@@ -285,7 +285,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result(f"已设置本群欢迎语为：\n{message}")
 
-    @welcome.command("on", "开启当前群欢迎功能", alias={'开启欢迎'})
+    @welcome.command("on", description="开启当前群欢迎功能", alias={'开启欢迎'})
     async def enable_welcome(self, event: AstrMessageEvent):
         """开启当前群的自动欢迎功能"""
         if not event.message_obj.group_id:
@@ -298,7 +298,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result("已开启本群自动欢迎功能")
 
-    @welcome.command("off", "关闭当前群欢迎功能", alias={'关闭欢迎'})
+    @welcome.command("off", description="关闭当前群欢迎功能", alias={'关闭欢迎'})
     async def disable_welcome(self, event: AstrMessageEvent):
         """关闭当前群的自动欢迎功能"""
         if not event.message_obj.group_id:
@@ -313,7 +313,7 @@ class WelcomePlugin(Star):
         else:
             yield event.plain_result("本群尚未配置欢迎功能")
 
-    @welcome.command("test", "测试当前群欢迎语", alias={'测试欢迎'})
+    @welcome.command("test", description="测试当前群欢迎语", alias={'测试欢迎'})
     async def test_welcome(self, event: AstrMessageEvent):
         """测试当前群的欢迎语效果"""
         if not event.message_obj.group_id:
@@ -347,7 +347,7 @@ class WelcomePlugin(Star):
     def leave(self):
         pass
 
-    @leave.command("set", "设置退群消息", alias={'设置退群'})
+    @leave.command("set", description="设置退群消息", alias={'设置退群'})
     async def set_leave(self, event: AstrMessageEvent, message: str = ""):
         """
         设置当前群的退群消息
@@ -372,7 +372,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result(f"已设置本群退群消息为：\n{message}")
 
-    @leave.command("on", "开启退群通知", alias={'开启退群'})
+    @leave.command("on", description="开启退群通知", alias={'开启退群'})
     async def enable_leave(self, event: AstrMessageEvent):
         """开启当前群的退群通知功能"""
         if not event.message_obj.group_id:
@@ -385,7 +385,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result("已开启本群退群通知功能")
 
-    @leave.command("off", "关闭退群通知", alias={'关闭退群'})
+    @leave.command("off", description="关闭退群通知", alias={'关闭退群'})
     async def disable_leave(self, event: AstrMessageEvent):
         """关闭当前群的退群通知功能"""
         if not event.message_obj.group_id:
@@ -404,7 +404,7 @@ class WelcomePlugin(Star):
     def kick(self):
         pass
 
-    @kick.command("set", "设置被踢消息", alias={'设置被踢'})
+    @kick.command("set", description="设置被踢消息", alias={'设置被踢'})
     async def set_kick(self, event: AstrMessageEvent, message: str = ""):
         """
         设置当前群的被踢消息
@@ -429,7 +429,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result(f"已设置本群被踢消息为：\n{message}")
 
-    @kick.command("on", "开启被踢通知", alias={'开启被踢'})
+    @kick.command("on", description="开启被踢通知", alias={'开启被踢'})
     async def enable_kick(self, event: AstrMessageEvent):
         """开启当前群的被踢通知功能"""
         if not event.message_obj.group_id:
@@ -442,7 +442,7 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result("已开启本群被踢通知功能")
 
-    @kick.command("off", "关闭被踢通知", alias={'关闭被踢'})
+    @kick.command("off", description="关闭被踢通知", alias={'关闭被踢'})
     async def disable_kick(self, event: AstrMessageEvent):
         """关闭当前群的被踢通知功能"""
         if not event.message_obj.group_id:
