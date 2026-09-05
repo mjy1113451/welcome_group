@@ -27,7 +27,7 @@
 配置分两层，群级配置优先于全局配置：
 
 1. **群级配置**（通过 `/welcome set`、`/welcome leave`、`/welcome kick` 设置）—— 该群开启后使用自己的模板
-2. **全局配置**（通过插件配置界面或 `/welcome global_*` 命令设置）—— 全局模式开启时，未单独配置的群使用全局模板
+2. **全局配置**（通过插件配置界面或 `/global_welcome`、`/global_leave`、`/global_kick` 命令设置）—— 全局模式开启时，未单独配置的群使用全局模板
 3. 两者都未开启时不发送任何通知
 
 使用 `/welcome status` 可查看当前群实际生效的配置及其来源。
@@ -69,10 +69,10 @@
 
 | 命令 | 说明 |
 |---|---|
-| `/welcome global` | 开启/关闭全局模式 |
-| `/welcome global_set <消息>` | 设置全局入群欢迎语 |
-| `/welcome global_leave <消息>` | 设置全局退群提示 |
-| `/welcome global_kick <消息>` | 设置全局被踢提示 |
+| `/global_switch` | 开启/关闭全局模式 |
+| `/global_welcome <消息>` | 设置全局入群欢迎语 |
+| `/global_leave <消息>` | 设置全局退群提示 |
+| `/global_kick <消息>` | 设置全局被踢提示 |
 | `/welcome status` | 查看当前群生效的配置及来源 |
 
 也可以在 AstrBot 控制台的插件配置界面中直接设置这四项。

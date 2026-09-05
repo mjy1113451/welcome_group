@@ -456,8 +456,11 @@ class WelcomePlugin(Star):
             yield event.plain_result(f"获取 provider 列表失败: {e}")
 
     # ---- 全局配置指令 ----
+    # issue #48: 维护者拍板改为独立顶层命令，降低 /welcome global_xxx 的记忆负担。
+    # 原 /welcome global / global_set / global_leave / global_kick 分别对应
+    # /global_switch /global_welcome /global_leave /global_kick。
 
-    @welcome_group_cmd.command("global", "开启/关闭全局欢迎/通知")
+    @filter.command("global_switch", "开启/关闭全局欢迎/通知模式")
     async def toggle_global(self, event: AstrMessageEvent):
         """开启/关闭全局模式。
         全局模式开启后，未单独配置过的群将使用全局模板发送欢迎/退群/被踢通知。
@@ -468,9 +471,9 @@ class WelcomePlugin(Star):
         status = "开启" if not current else "关闭"
         yield event.plain_result(f"全局模式已{status}。")
 
-    @welcome_group_cmd.command("global_set", "设置全局入群欢迎语")
+    @filter.command("global_welcome", "设置全局入群欢迎语")
     async def set_global_welcome(self, event: AstrMessageEvent, message: str = ""):
-        """设置全局入群欢迎语。例如: /welcome global_set 欢迎 {at} 加入！"""
+        """设置全局入群欢迎语。例如: /global_welcome 欢迎 {at} 加入！"""
         if not message.strip():
             yield event.plain_result("请提供欢迎语内容。")
             return
@@ -478,9 +481,9 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result(f"已设置全局入群欢迎语为：\n{message}")
 
-    @welcome_group_cmd.command("global_leave", "设置全局退群提示")
+    @filter.command("global_leave", "设置全局退群提示")
     async def set_global_leave(self, event: AstrMessageEvent, message: str = ""):
-        """设置全局退群提示。例如: /welcome global_leave {user_id} 离开了本群"""
+        """设置全局退群提示。例如: /global_leave {user_id} 离开了本群"""
         if not message.strip():
             yield event.plain_result("请提供提示内容。")
             return
@@ -488,9 +491,9 @@ class WelcomePlugin(Star):
         self.save_config()
         yield event.plain_result(f"已设置全局退群提示为：\n{message}")
 
-    @welcome_group_cmd.command("global_kick", "设置全局被踢提示")
+    @filter.command("global_kick", "设置全局被踢提示")
     async def set_global_kick(self, event: AstrMessageEvent, message: str = ""):
-        """设置全局被踢提示。例如: /welcome global_kick {user_id} 被移出了本群"""
+        """设置全局被踢提示。例如: /global_kick {user_id} 被移出了本群"""
         if not message.strip():
             yield event.plain_result("请提供提示内容。")
             return
