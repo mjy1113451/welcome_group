@@ -1,5 +1,5 @@
-name: astrbot_plugin_welcome_group
-display_name: welcome_group
+name: astrbot_plugin_welcome_bye_group
+display_name: welcome_bye_group
 desc: 加群欢迎，退群被踢提示插件，支持LLM自动生成欢迎，被踢，退群消息。
 version: v1.0.5 
 author: mjy1113451 
