@@ -202,9 +202,10 @@ class WelcomePlugin(Star):
             else:
                 processed = welcome_template.replace("{time}", time_str).replace("{user_id}", str(user_id))
 
-            message_list = self._build_onebot_message(processed, int(user_id))
+            onebot = self._is_onebot_platform(event, group_id)
+            message_list = self._build_onebot_message(processed, user_id, allow_at=onebot)
 
-            logger.info(f"WelcomePlugin: 准备发送入群欢迎 -> 群 {group_id} 用户 {user_id} (来源: {source})")
+            logger.info(f"WelcomePlugin: 准备发送入群欢迎 -> 群 {group_id} 用户 {user_id} (来源: {source}, OneBot: {onebot})")
 
             await self._send_group_msg(event, group_id, message_list)
 
@@ -267,9 +268,10 @@ class WelcomePlugin(Star):
             else:
                 processed = template.replace("{time}", time_str).replace("{user_id}", str(user_id))
 
-            message_list = self._build_onebot_message(processed, int(user_id))
+            onebot = self._is_onebot_platform(event, group_id)
+            message_list = self._build_onebot_message(processed, user_id, allow_at=onebot)
 
-            logger.info(f"WelcomePlugin: 准备发送{log_label}通知 -> 群 {group_id} 用户 {user_id} (来源: {source})")
+            logger.info(f"WelcomePlugin: 准备发送{log_label}通知 -> 群 {group_id} 用户 {user_id} (来源: {source}, OneBot: {onebot})")
 
             await self._send_group_msg(event, group_id, message_list)
 
@@ -579,9 +581,27 @@ class WelcomePlugin(Star):
         return self.config["groups"][group_id]
 
     @staticmethod
-    def _build_onebot_message(template: str, user_id) -> list:
-        """构建 AstrBot 消息组件列表"""
-        if "{at}" in template:
+    def _is_onebot_platform(event: AstrMessageEvent, group_id: str) -> bool:
+        """判断当前平台是否支持 OneBot 群发语义（issue #50）。
+
+        QQ 官方机器人等非 OneBot 平台：client 无 send_group_msg 或 group_id 为 openid（非数字），
+        应走框架通用发送路径并将 At 降级为纯文本。
+        """
+        bot = getattr(event, "bot", None)
+        return bool(
+            bot is not None
+            and hasattr(bot, "send_group_msg")
+            and str(group_id or "").isdigit()
+        )
+
+    @staticmethod
+    def _build_onebot_message(template: str, user_id, allow_at: bool = True) -> list:
+        """构建 AstrBot 消息组件列表。
+
+        issue #50：allow_at=False（非 OneBot 平台）时把 {at} 降级为纯文本 @<id>——
+        At(qq=...) 在官方机器人出站会被静默丢弃（_parse_to_qqofficial 仅序列化 Plain/Image 等）。
+        """
+        if "{at}" in template and allow_at:
             parts = template.split("{at}")
             message_list = []
             for i, part in enumerate(parts):
@@ -590,15 +610,16 @@ class WelcomePlugin(Star):
                 if i < len(parts) - 1:
                     message_list.append(At(qq=user_id))
             return message_list
-        else:
-            return [Plain(template)]
+        if "{at}" in template:
+            template = template.replace("{at}", f"@{user_id}")
+        return [Plain(template)]
 
     @classmethod
     async def _send_group_msg(cls, event: AstrMessageEvent, group_id: str, message_list: list):
         """发送群消息 - 直接使用 bot API，绕过框架的 Reply 组件注入"""
         try:
             bot = getattr(event, 'bot', None)
-            if bot and hasattr(bot, 'send_group_msg'):
+            if bot and hasattr(bot, 'send_group_msg') and str(group_id).isdigit():
                 # 将消息组件转为 OneBot JSON 格式
                 raw_messages = []
                 for comp in message_list:
@@ -668,7 +689,8 @@ class WelcomePlugin(Star):
         else:
             processed = template.replace("{time}", time_str).replace("{user_id}", str(user_id))
 
-        message_list = self._build_onebot_message(processed, int(user_id))
+        onebot = self._is_onebot_platform(event, str(group_id))
+        message_list = self._build_onebot_message(processed, user_id, allow_at=onebot)
         try:
             await self._send_group_msg(event, str(group_id), message_list)
         except Exception as e:
