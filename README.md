@@ -149,6 +149,21 @@ git clone https://github.com/mjy1113451/welcome_group.git
 
 ---
 
+## 平台兼容（issue #50）
+
+经 AstrBot 维护者确认（AstrBotDevs/AstrBot#10056），QQ 官方机器人（qqofficial）平台的能力边界如下：
+
+| 功能 | OneBot v11（aiocqhttp 等） | QQ 官方机器人 |
+|------|--------------------------|----------------|
+| 配置指令（/welcome 等） | ✅ | ✅（跨平台可用） |
+| 入群欢迎 / 退群 / 被踢通知 | ✅ | ⚠️ 依赖 core 事件推送：当前 AstrBot 不推送 group_increase/group_decrease，**暂不支持**，待 core 补充 member_notice 能力后自动生效 |
+| 消息发送 | OneBot `send_group_msg` | 框架通用 `event.send(...)`（UMO 路径） |
+| `{at}` 提及 | At 组件 | 降级为纯文本 `@<id>`（At 在官方出站被静默丢弃） |
+
+非 OneBot 平台插件会自动检测并降级：发送走通用路径、`{at}` 降级纯文本；发送为可失败操作，失败记录日志、不做无界重试。
+
+---
+
 ## 项目结构
 
 ```
