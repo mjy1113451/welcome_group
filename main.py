@@ -1,4 +1,4 @@
-from astrbot.api.event import filter, AstrMessageEvent
+from astrbot.api.event import filter, AstrMessageEvent, MessageChain
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
 from astrbot.api.message_components import Plain, At
@@ -128,8 +128,9 @@ class WelcomePlugin(Star):
         """发送群消息"""
         try:
             if hasattr(event, 'send'):
-                # AstrBot 可直接发送消息组件列表，无需导入不存在的 MessageChain
-                await event.send(message_list)
+                # event.send() 只接受 MessageChain，直接传组件列表会触发
+                # AttributeError: 'list' object has no attribute 'chain'
+                await event.send(MessageChain(message_list))
                 return True
         except Exception as e:
             logger.error(f"发送消息失败: {e}")
@@ -185,7 +186,7 @@ class WelcomePlugin(Star):
                 try:
                     fallback_list = self._build_fallback_chain(processed, user_id)
                     if hasattr(event, 'send'):
-                        await event.send(fallback_list)
+                        await event.send(MessageChain(fallback_list))
                 except Exception:
                     pass
         except Exception as e:
@@ -243,7 +244,7 @@ class WelcomePlugin(Star):
                 return
             
             time_str = self._parse_time(raw)
-            processed = template.replace("{time}", time_str).replace("{user_id", str(user_id))
+            processed = template.replace("{time}", time_str).replace("{user_id}", str(user_id))
             message_list = self._build_onebot_message(processed, user_id)
             await self._send_group_msg(event, group_id, message_list)
         except Exception as e:
